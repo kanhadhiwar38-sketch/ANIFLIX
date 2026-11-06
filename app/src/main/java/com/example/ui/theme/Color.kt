@@ -11,6 +11,15 @@ val AccentAmber = Color(0xFFFF8C00)
 val TextPrimary = Color(0xFFF5F5F7)
 val TextSecondary = Color(0xFF9E9EAF)
 
+// New accent colors for AnyFilm redesign
+val NeonTeal = Color(0xFF00C2A8)
+val DeepNavy = Color(0xFF0D0E1A)
+val CardSurface = Color(0xFF16172B)
+val HotRed = Color(0xFFFF3B5C)
+val TabActive = Color(0xFF00C2A8)
+val ChipBg = Color(0xFF1E2235)
+val SectionHeaderColor = Color(0xFFF0F0F5)
+
 // Legacy compatibility
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)

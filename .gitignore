@@ -13,3 +13,6 @@ key.properties
 
 # Local configuration
 local.properties
+.env
+.antigravity/
+.vscode/

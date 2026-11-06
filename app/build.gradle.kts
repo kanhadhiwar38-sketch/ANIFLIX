@@ -8,37 +8,26 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.google.services)
+  alias(libs.plugins.secrets)
 }
 
 android {
   namespace = "com.example"
-  compileSdk { version = release(36) { minorApiLevel = 1 } }
+  compileSdk = 36
 
   defaultConfig {
-    applicationId = "com.anyfilm.app"
+    applicationId = "com.aistudio.anyfilm.kxmpzq"
     minSdk = 24
     targetSdk = 36
     versionCode = 7
     versionName = "4.2"
   }
 
-  val keystorePropertiesFile = rootProject.file("key.properties")
-  val keystoreProperties = Properties()
-  if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-  }
-
   signingConfigs {
-    create("release") {
-      val keyStorePath = keystoreProperties.getProperty("storeFile") ?: "release-key.jks"
-      val resolvedFile = File(keyStorePath)
-      storeFile = if (resolvedFile.isAbsolute) resolvedFile else file(keyStorePath)
-      storePassword = keystoreProperties.getProperty("storePassword")
-      keyAlias = keystoreProperties.getProperty("keyAlias")
-      keyPassword = keystoreProperties.getProperty("keyPassword")
-    }
     create("debugConfig") {
-      storeFile = file("${rootDir}/debug.keystore")
+      val rootKs = file("${rootDir}/debug.keystore")
+      val homeKs = file("${System.getProperty("user.home")}/.android/debug.keystore")
+      storeFile = if (rootKs.exists()) rootKs else homeKs
       storePassword = "android"
       keyAlias = "androiddebugkey"
       keyPassword = "android"
@@ -50,9 +39,10 @@ android {
       isCrunchPngs = false
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-      signingConfig = signingConfigs.getByName("release")
+      signingConfig = signingConfigs.getByName("debugConfig")
     }
     debug {
+      signingConfig = signingConfigs.getByName("debugConfig")
     }
   }
   compileOptions {
@@ -65,25 +55,20 @@ android {
   }
 }
 
-
+secrets {
+  propertiesFileName = ".env"
+  defaultPropertiesFileName = ".env.example"
+}
 
 googleServices {
   missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN
 }
 
-
-// Some unused dependencies are commented out below instead of being removed.
-// This makes it easy to add them back in the future if needed.
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(platform(libs.firebase.bom))
-  // implementation(libs.accompanist.permissions)
   implementation(libs.androidx.activity.compose)
   implementation("androidx.appcompat:appcompat:1.6.1")
-  // implementation(libs.androidx.camera.camera2)
-  // implementation(libs.androidx.camera.core)
-  // implementation(libs.androidx.camera.lifecycle)
-  // implementation(libs.androidx.camera.view)
   implementation(libs.androidx.compose.material.icons.core)
   implementation(libs.androidx.compose.material.icons.extended)
   implementation(libs.androidx.compose.material3)
@@ -91,7 +76,6 @@ dependencies {
   implementation(libs.androidx.compose.ui.graphics)
   implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.core.ktx)
-  // implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.lifecycle.runtime.compose)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -107,7 +91,6 @@ dependencies {
   implementation(libs.logging.interceptor)
   implementation(libs.moshi.kotlin)
   implementation(libs.okhttp)
-  // implementation(libs.play.services.location)
   implementation(libs.retrofit)
   debugImplementation(libs.androidx.compose.ui.tooling)
   "ksp"(libs.androidx.room.compiler)

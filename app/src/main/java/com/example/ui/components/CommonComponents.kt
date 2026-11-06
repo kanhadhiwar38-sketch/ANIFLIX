@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -203,15 +204,21 @@ fun DashboardShimmerScreen() {
 }
 
 @Composable
-fun MovieGridItem(movie: MovieSubject, showRating: Boolean = false, onClick: () -> Unit) {
+fun MovieGridItem(
+    movie: MovieSubject,
+    showRating: Boolean = false,
+    showLiveBadge: Boolean = false,
+    badgeText: String? = null,
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier
-            .width(110.dp)
+            .width(115.dp)
             .clickable { onClick() }
     ) {
         Box(
             modifier = Modifier
-                .height(160.dp)
+                .height(165.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
         ) {
@@ -241,19 +248,68 @@ fun MovieGridItem(movie: MovieSubject, showRating: Boolean = false, onClick: () 
                 error = placeholderPainter,
                 modifier = Modifier.fillMaxSize()
             )
-            // Rating Tag
-            if (showRating) {
+
+            // Live tag in top left
+            if (showLiveBadge) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(5.dp)
+                        .background(Color(0xFF00C2A8), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 5.dp, vertical = 2.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.LiveTv,
+                            contentDescription = "Live",
+                            tint = Color.White,
+                            modifier = Modifier.size(9.dp)
+                        )
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Text(
+                            text = "LIVE",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+
+            // Language Tag (or badgeText) in Top End
+            val resolvedBadge = remember(badgeText, movie.dubs, movie.name) {
+                if (!badgeText.isNullOrEmpty()) badgeText
+                else if (movie.dubs.any { it.contains("Hindi", ignoreCase = true) } || movie.name.contains("Hindi", ignoreCase = true)) "Hindi"
+                else null
+            }
+
+            if (resolvedBadge != null) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(4.dp)
+                        .padding(5.dp)
+                        .background(Color.Black.copy(alpha = 0.75f), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = resolvedBadge,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
+            } else if (showRating && !movie.rating.isNullOrEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(5.dp)
                         .background(Color.Black.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
                         .padding(horizontal = 4.dp, vertical = 2.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Filled.Star, contentDescription = "Rating", tint = AccentAmber, modifier = Modifier.size(10.dp))
                         Spacer(modifier = Modifier.width(2.dp))
-                        Text(movie.rating ?: "Not available", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(movie.rating, fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     }
                 }
             }
@@ -268,7 +324,7 @@ fun MovieGridItem(movie: MovieSubject, showRating: Boolean = false, onClick: () 
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = movie.year ?: "Not available",
+            text = movie.year ?: "",
             fontSize = 11.sp,
             color = TextSecondary
         )

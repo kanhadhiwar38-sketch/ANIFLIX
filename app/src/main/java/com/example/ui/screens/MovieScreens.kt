@@ -1020,6 +1020,7 @@ fun AppUpdateDialog(
     }
 }
 
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainContent(viewModel: MovieViewModel) {
@@ -1071,85 +1072,92 @@ fun MainContent(viewModel: MovieViewModel) {
         Scaffold(
             bottomBar = {
                 if (viewModel.playInfo == null && viewModel.playingDownloadedFile == null && !viewModel.isLiveTvPlaying) {
-                    NavigationBar(
-                        containerColor = ObsidianDark,
-                        tonalElevation = 8.dp
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(68.dp)
+                            .background(Color(0xFF0F111D))
                     ) {
-                        if (!isForceUpdateActive) {
-                            NavigationBarItem(
-                                selected = activeTab == "home",
-                                onClick = { activeTab = "home" },
-                                icon = { Icon(if (activeTab == "home") Icons.Filled.Home else Icons.Outlined.Home, contentDescription = "Home") },
-                                label = { Text("Home", fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = CinematicRed,
-                                    selectedTextColor = CinematicRed,
-                                    indicatorColor = ObsidianCard,
-                                    unselectedIconColor = TextSecondary,
-                                    unselectedTextColor = TextSecondary
-                                ),
-                                modifier = Modifier.testTag("nav_home")
-                            )
-                            NavigationBarItem(
-                                selected = activeTab == "search",
-                                onClick = { activeTab = "search" },
-                                icon = { Icon(if (activeTab == "search") Icons.Filled.Search else Icons.Outlined.Search, contentDescription = "Search") },
-                                label = { Text("Search", fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = CinematicRed,
-                                    selectedTextColor = CinematicRed,
-                                    indicatorColor = ObsidianCard,
-                                    unselectedIconColor = TextSecondary,
-                                    unselectedTextColor = TextSecondary
-                                ),
-                                modifier = Modifier.testTag("nav_search")
-                            )
-                            NavigationBarItem(
-                                selected = activeTab == "livetv",
-                                onClick = { activeTab = "livetv" },
-                                icon = { Icon(if (activeTab == "livetv") Icons.Filled.LiveTv else Icons.Outlined.LiveTv, contentDescription = "Live TV") },
-                                label = { Text("Live TV", fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = CinematicRed,
-                                    selectedTextColor = CinematicRed,
-                                    indicatorColor = ObsidianCard,
-                                    unselectedIconColor = TextSecondary,
-                                    unselectedTextColor = TextSecondary
-                                ),
-                                modifier = Modifier.testTag("nav_livetv")
-                            )
-                        }
+                        // Nav items row
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (!isForceUpdateActive) {
+                                // Home
+                                NavBarIconItem(
+                                    icon = if (activeTab == "home") Icons.Filled.Home else Icons.Outlined.Home,
+                                    label = "",
+                                    selected = activeTab == "home",
+                                    onClick = { activeTab = "home" }
+                                )
+                                // Music / Hot
+                                Box {
+                                    NavBarIconItem(
+                                        icon = if (activeTab == "search") Icons.Filled.MusicNote else Icons.Outlined.MusicNote,
+                                        label = "",
+                                        selected = activeTab == "search",
+                                        onClick = { activeTab = "search" }
+                                    )
+                                    // HOT badge
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .offset(x = 6.dp, y = (-2).dp)
+                                            .background(HotRed, RoundedCornerShape(3.dp))
+                                            .padding(horizontal = 3.dp, vertical = 1.dp)
+                                    ) {
+                                        Text("HOT", color = Color.White, fontSize = 7.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                            }
 
-                        NavigationBarItem(
-                            selected = activeTab == "download",
-                            onClick = { activeTab = "download" },
-                            icon = { Icon(if (activeTab == "download") Icons.Filled.Download else Icons.Outlined.Download, contentDescription = "Download") },
-                            label = { Text("Download", fontSize = 11.sp) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = CinematicRed,
-                                selectedTextColor = CinematicRed,
-                                indicatorColor = ObsidianCard,
-                                unselectedIconColor = TextSecondary,
-                                unselectedTextColor = TextSecondary
-                            ),
-                            modifier = Modifier.testTag("nav_download")
-                        )
+                            // CENTER: Raised circular LIVE button
+                            Box(
+                                modifier = Modifier
+                                    .size(54.dp)
+                                    .offset(y = (-14).dp)
+                                    .border(2.dp, NeonTeal, CircleShape)
+                                    .background(Color(0xFF092923), CircleShape)
+                                    .clickable { activeTab = "livetv" },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(
+                                        imageVector = Icons.Filled.LiveTv,
+                                        contentDescription = "Live TV",
+                                        tint = NeonTeal,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Text(
+                                        text = "LIVE",
+                                        color = NeonTeal,
+                                        fontSize = 8.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
 
-                        if (!isForceUpdateActive) {
-                            NavigationBarItem(
-                                selected = activeTab == "settings",
-                                onClick = { activeTab = "settings" },
-                                icon = { Icon(if (activeTab == "settings") Icons.Filled.Settings else Icons.Outlined.Settings, contentDescription = "Settings") },
-                                label = { Text("Settings", fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = CinematicRed,
-                                    selectedTextColor = CinematicRed,
-                                    indicatorColor = ObsidianCard,
-                                    unselectedIconColor = TextSecondary,
-                                    unselectedTextColor = TextSecondary
-                                ),
-                                modifier = Modifier.testTag("nav_settings")
+                            // Download
+                            NavBarIconItem(
+                                icon = if (activeTab == "download") Icons.Filled.Download else Icons.Outlined.Download,
+                                label = "",
+                                selected = activeTab == "download",
+                                onClick = { activeTab = "download" }
                             )
+
+                            if (!isForceUpdateActive) {
+                                // Settings/Profile
+                                NavBarIconItem(
+                                    icon = if (activeTab == "settings") Icons.Filled.Person else Icons.Outlined.Person,
+                                    label = "",
+                                    selected = activeTab == "settings",
+                                    onClick = { activeTab = "settings" }
+                                )
+                            }
                         }
                     }
                 }
@@ -1161,7 +1169,11 @@ fun MainContent(viewModel: MovieViewModel) {
                     .padding(if (viewModel.isLiveTvPlaying) PaddingValues(0.dp) else innerPadding)
             ) {
                 when (activeTab) {
-                    "home" -> HomeScreen(viewModel)
+                    "home" -> HomeScreen(
+                        viewModel = viewModel,
+                        onNavigateToSearch = { activeTab = "search" },
+                        onNavigateToLiveTv = { activeTab = "livetv" }
+                    )
                     "search" -> SearchScreen(viewModel)
                     "livetv" -> LiveTvScreen(viewModel)
                     "watchlist" -> WatchlistScreen(
@@ -1484,6 +1496,7 @@ fun DashboardShimmerScreen() {
         }
     }
 }
+
 
 @Composable
 fun MovieGridItem(movie: MovieSubject, showRating: Boolean = false, onClick: () -> Unit) {
@@ -1811,6 +1824,7 @@ fun SearchScreen(viewModel: MovieViewModel) {
     }
 }
 
+
 @Composable
 fun WatchlistScreen(viewModel: MovieViewModel, onBack: () -> Unit = {}) {
     val favorites by viewModel.favoritesList.collectAsState()
@@ -1883,7 +1897,7 @@ fun WatchlistScreen(viewModel: MovieViewModel, onBack: () -> Unit = {}) {
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(movie.name, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                            Text((movie.year ?: "Not available") + " • " + if (movie.isTvShow) "TV Show" else "Movie", fontSize = 13.sp, color = TextSecondary)
+                            Text((movie.year ?: "Not available") + " â€¢ " + if (movie.isTvShow) "TV Show" else "Movie", fontSize = 13.sp, color = TextSecondary)
                         }
                         IconButton(onClick = {
                             val subject = MovieSubject(id = movie.id, name = movie.name, poster = movie.poster)
@@ -1897,6 +1911,7 @@ fun WatchlistScreen(viewModel: MovieViewModel, onBack: () -> Unit = {}) {
         }
     }
 }
+
 
 @Composable
 fun HistoryScreen(viewModel: MovieViewModel, onBack: () -> Unit = {}) {
@@ -1985,7 +2000,7 @@ fun HistoryScreen(viewModel: MovieViewModel, onBack: () -> Unit = {}) {
                                 Spacer(modifier = Modifier.height(4.dp))
                                 if (item.isTvShow) {
                                     Text(
-                                        text = "${episodesList.size} episodes watched • Tap to view",
+                                        text = "${episodesList.size} episodes watched â€¢ Tap to view",
                                         fontSize = 13.sp,
                                         color = AccentAmber,
                                         fontWeight = FontWeight.Medium
@@ -2079,6 +2094,7 @@ fun HistoryScreen(viewModel: MovieViewModel, onBack: () -> Unit = {}) {
         }
     }
 }
+
 
 @Composable
 fun LabScreen(viewModel: MovieViewModel) {
@@ -3337,7 +3353,7 @@ fun PlayerScreen(viewModel: MovieViewModel) {
                                 ) {
                                     val currentDub = viewModel.selectedResource?.name ?: "Original Audio"
                                     Text(
-                                        text = "$currentDub ▾",
+                                        text = "$currentDub â–¾",
                                         color = Color.White,
                                         fontSize = 13.sp
                                     )
@@ -3353,7 +3369,7 @@ fun PlayerScreen(viewModel: MovieViewModel) {
                                     contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
                                 ) {
                                     Text(
-                                        text = "Season ${viewModel.selectedSeason.toString().padStart(2, '0')} ▾",
+                                        text = "Season ${viewModel.selectedSeason.toString().padStart(2, '0')} â–¾",
                                         color = Color.White,
                                         fontSize = 13.sp
                                     )
@@ -3987,6 +4003,7 @@ fun PlayerScreen(viewModel: MovieViewModel) {
         }
     }
 }
+
 }
 
 // Human readable time formatter helper (mm:ss)
@@ -4536,7 +4553,7 @@ fun DownloadScreen(viewModel: MovieViewModel) {
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = "${active.progress}% (${(active.downloadedBytes / (1024 * 1024))}MB / ${if (active.totalBytes > 0) (active.totalBytes / (1024 * 1024)).toString() + "MB" else "Unknown"}) • $statusText",
+                                            text = "${active.progress}% (${(active.downloadedBytes / (1024 * 1024))}MB / ${if (active.totalBytes > 0) (active.totalBytes / (1024 * 1024)).toString() + "MB" else "Unknown"}) â€¢ $statusText",
                                             color = if (active.status == android.app.DownloadManager.STATUS_PAUSED) Color(0xFFFBBF24) else TextSecondary,
                                             fontSize = 11.sp
                                         )
@@ -4837,7 +4854,7 @@ fun DownloadScreen(viewModel: MovieViewModel) {
                     val epMatch = Regex("_S(\\d+)E(\\d+)").find(fileToPlay.nameWithoutExtension)
                     val displayName = if (epMatch != null) {
                         val showPrefix = fileToPlay.nameWithoutExtension.substringBefore("_S").replace("_", " ")
-                        "$showPrefix • Season ${epMatch.groupValues[1]} Episode ${epMatch.groupValues[2]}"
+                        "$showPrefix â€¢ Season ${epMatch.groupValues[1]} Episode ${epMatch.groupValues[2]}"
                     } else {
                         fileToPlay.nameWithoutExtension.replace("_", " ")
                     }
@@ -5449,6 +5466,55 @@ fun OfflinePlayerScreen(fileToPlay: java.io.File, onDismiss: () -> Unit) {
                     }
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+private fun NavBarIconItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String = "",
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(horizontal = 6.dp, vertical = 4.dp)
+    ) {
+        if (selected) {
+            Box(
+                modifier = Modifier
+                    .background(NeonTeal.copy(alpha = 0.22f), RoundedCornerShape(10.dp))
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = NeonTeal,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        } else {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = TextSecondary,
+                modifier = Modifier
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .size(24.dp)
+            )
+        }
+        if (label.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                fontSize = 10.sp,
+                color = if (selected) NeonTeal else TextSecondary,
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+            )
         }
     }
 }
